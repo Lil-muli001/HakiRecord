@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="{% static 'assets/css/login.css' %}">
 </head>
 <body>
+<div class="container">
+
+    <div class="login_error">
+        {% if messages %}
+    {% for message in messages %}
+        <p style="color:red;">{{ message }}</p>
+    {% endfor %}
+{% endif %}
+</div>
+
 <div class="login">
 
     <form action="/login/" method="post" class="login_form">
@@ -24,7 +34,7 @@
         </div>
 
 </form>
-
+</div>
 </div>
 </body>
 </html>

@@ -25,7 +25,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
     <link href="{%  static 'assets/css/main.css' %}" rel="stylesheet">
+    <style>
+        .case-card {
+  border-left: 4px solid #272f52;
+  transition: all 0.3s ease;
+}
 
+.case-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+    </style>
 
 </head>
 <body>
@@ -41,7 +51,17 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="{% url 'homepage' %}" class="active">Home</a></li>
-          <li><a href="{% url 'homepage' %}#services">Features</a></li>
+          <li class="dropdown"><a href="#"><span >Features</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="{% url 'statement' %}">Record Statement</a></li>
+                  <li><a href="{% url 'cases' %}">View Cases</a></li>
+                  <li><a href="{% url 'evidence' %}">Evidence Vault</a></li>
+                  <li><a href="{% url 'recent_actions' %}">Audit Trail</a></li>
+                  <li><a href="#">Crime Analysis</a></li>
+                  <li><a href="{% url 'shift' %}">Shift Allocation</a></li>
+
+                </ul>
+              </li>
           <li><a href="{% url 'contact' %}">Contact</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -50,41 +70,44 @@
 
     </div>
   </header>
+<div class="container mt-5">
+    <h1 class="mb-4 d-flex justify-content-center">Recorded Cases</h1>
 
+    <!-- Search Form -->
+    <form method="GET" action="{% url 'cases' %}" class="mb-4 d-flex justify-content-center">
+        <div class="input-group w-50">
+            <input type="text" name="q" class="form-control" placeholder="Search by OB number, Case type, or ID number"
+                   value="{{ query|default:'' }}">
+            <button type="submit" class="btn" style="background-color: #ffd700; color: white; font-weight: bold">Search</button>
+        </div>
+    </form>
 
-<div class="container">
-<h1>Recorded Cases</h1>
-<table class=" table table-bordered table-primary table-hover" >
-    <tr>
-        <th></th>
-        <th>OB Number</th>
-        <th>Officer Service NO.</th>
-        <th>Last Name</th>
-        <th>ID No.</th>
-        <th>Incident Date</th>
-        <th>incident Type</th>
-        <th>Incident Location</th>
-        <th>Case Description</th>
-        <th>Date Recorded</th>
-    </tr>
-    <tr>
+    <div class="row">
         {% for statement in statements %}
-            <tr>
-            <td>{{ forloop.counter }}</td>
-                <td>{{ statement.ob_number }}</td>
-                <td>{{ statement.service_no.username }}</td>
-                <td>{{ statement.last_name }}</td>
-                <td>{{ statement.id_number }}</td>
-                <td>{{ statement.incident_date }}</td>
-                <td>{{ statement.incident_type }}</td>
-                <td>{{ statement.incident_location }}</td>
-                <td>{{ statement.incident_description }}</td>
-                <td>{{ statement.recorded_at|date:"F j, Y" }}</td>
-            </tr>
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'case_detail' statement.id %}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm case-card">
+                    <div class="card-body">
+                        <h5 class="card-title"><strong>OB:</strong> {{ statement.ob_number }}</h5>
+                        <p class="card-text mb-1"><strong>Date:</strong> {{ statement.incident_date }}</p>
+                        <p class="card-text"><strong>Type:</strong> {{ statement.incident_type }}</p>
+                        <p class="card-text"><strong>ID No:</strong> {{ statement.id_number }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <p>No cases found matching your search.</p>
         {% endfor %}
-
-</table>
     </div>
+</div>
+<style>
+.case-card:hover {
+    transform: translateY(-5px);
+    transition: 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+</style>
 <footer id="footer" class="footer dark-background">
 
     <div class="container footer-top">

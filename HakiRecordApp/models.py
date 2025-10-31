@@ -3,6 +3,12 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.contrib import admin
+from django.contrib.admin.models import LogEntry, CHANGE
+from django.utils.encoding import force_str
+from django.contrib.contenttypes.models import ContentType
+import json
+
 class Statement(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -60,4 +66,31 @@ class Contact(models.Model):
 
     def _str_(self):
        return f"{self.contact_name} {self.contact_email}"
+
+class StatementAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        if change:
+            # Compare old and new field values
+            old_obj = self.model.objects.get(pk=obj.pk)
+            changes = {}
+            for field in form.changed_data:
+                old_value = getattr(old_obj, field)
+                new_value = getattr(obj, field)
+                changes[field] = {"old": str(old_value), "new": str(new_value)}
+
+            # Save the object
+            super().save_model(request, obj, form, change)
+
+            # Log a more detailed change message
+            change_message = json.dumps({"changed_fields": changes})
+            LogEntry.objects.log_action(
+                user_id=request.user.pk,
+                content_type_id=ContentType.objects.get_for_model(obj).pk,
+                object_id=obj.pk,
+                object_repr=force_str(obj),
+                action_flag=CHANGE,
+                change_message=change_message,
+            )
+        else:
+            super().save_model(request, obj, form, change)
 

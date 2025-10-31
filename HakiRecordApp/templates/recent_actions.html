@@ -37,7 +37,17 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="{% url 'homepage' %}" class="active">Home</a></li>
-          <li><a href="{% url 'homepage' %}#services">Features</a></li>
+         <li class="dropdown"><a href="#"><span >Features</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="{% url 'statement' %}">Record Statement</a></li>
+                  <li><a href="{% url 'cases' %}">View Cases</a></li>
+                  <li><a href="{% url 'evidence' %}">Evidence Vault</a></li>
+                  <li><a href="{% url 'recent_actions' %}">Audit Trail</a></li>
+                  <li><a href="#">Crime Analysis</a></li>
+                  <li><a href="{% url 'shift' %}">Shift Allocation</a></li>
+
+                </ul>
+              </li>
           <li><a href="{% url 'contact' %}">Contact</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -60,23 +70,37 @@
             </tr>
         </thead>
         <tbody>
-            {% for action in actions %}
-            <tr>
-                <td>{{ action.action_time }}</td>
-                <td>{{ action.user }}</td>
-                <td>
-                    {% if action.is_addition %} Added
-                    {% elif action.is_change %} Modified
-                    {% elif action.is_deletion %} Deleted
-                    {% endif %}
-                </td>
-                <td>{{ action.object_repr }}</td>
-                <td>{{ action.content_type.model }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5">No actions found.</td></tr>
-            {% endfor %}
-        </tbody>
+    {% for action in actions %}
+    <tr>
+        <td>{{ action.action_time }}</td>
+        <td>{{ action.user }}</td>
+        <td>
+            {% if action.is_addition %}
+                <span class="badge bg-success">Added</span>
+            {% elif action.is_change %}
+                <span class="badge bg-warning text-dark">Modified</span>
+                {% if action.detailed_changes %}
+                    <ul class="mt-2 mb-0">
+                        {% for field, diff in action.detailed_changes.items %}
+                            <li>
+                                <strong>{{ field|title }}</strong>:
+                                {{ diff.old }} →
+                                <span class="text-success">{{ diff.new }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% elif action.is_deletion %}
+                <span class="badge bg-danger">Deleted</span>
+            {% endif %}
+        </td>
+        <td>{{ action.object_repr }}</td>
+        <td>{{ action.content_type.model|title }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No actions found.</td></tr>
+    {% endfor %}
+</tbody>
     </table>
     </div>
 <footer id="footer" class="footer dark-background">

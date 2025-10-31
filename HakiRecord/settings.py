@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-r+f=b1ct==ds(d%uj_xcnsh_q2dy&f8vhx)vmc8^i5u6)98d-0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,6 +54,35 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+JAZZMIN_SETTINGS = {
+    "site_title": "HakiRecord Admin",
+    "site_header": "HakiRecord Admin Dashboard",
+    "site_brand": "HakiRecord Innovations",
+    "welcome_sign": "Welcome to HakiRecord Admin",
+    "copyright": "© 2025 HakiRecord Innovations",
+
+    # Top menu
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Website", "url": "/", "new_window": True},
+        {"model": "auth.User"},
+    ],
+
+    # Side Menu
+    "show_sidebar": True,
+    "navigation_expanded": True,
+
+    # Icons for models
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "yourapp.YourModel": "fas fa-database",
+    },
+
+    # Change theme colors
+    "theme": "slate",  # or "darkly", "flatly", "cosmo", etc.
+}
 ROOT_URLCONF = 'HakiRecord.urls'
 
 TEMPLATES = [
@@ -82,6 +112,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+AFRICASTALKING_USERNAME = 'sandbox'
+AFRICASTALKING_API_KEY = 'atsk_87355526a95339b54a692a36276c5c9c4923843732eb4bbe5d3c398e88d61c05dd65c333'
 
 
 # Password validation
@@ -135,3 +168,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
